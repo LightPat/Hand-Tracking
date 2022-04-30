@@ -6,18 +6,29 @@ Created on Sat Apr 30 12:55:27 2022
 """
 
 import cv2
+import mediapipe as mp
+import time
 
 cam = cv2.VideoCapture(0)
 
 cv2.namedWindow("Hand Tracking")
-
 img_counter = 0
+pTime = 0
+
+# mpHands = mp.solutions.hands
+
 
 while True:
     ret, frame = cam.read()
     if not ret:
         print("failed to grab frame")
         break
+
+    cTime = time.time()
+    fps = 1 / (cTime - pTime)
+    pTime = cTime
+    cv2.putText(frame, f'FPS:{int(fps)}', (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    
     cv2.imshow("Hand Tracking", frame)
 
     k = cv2.waitKey(1)
