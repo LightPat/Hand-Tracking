@@ -10,25 +10,35 @@ import mediapipe as mp
 import time
 
 cam = cv2.VideoCapture(0)
-
+# Create window for frames from webcam to be displayed in
 cv2.namedWindow("Hand Tracking")
+# Used for naming images if we save frames using the SPACE key
 img_counter = 0
+# Used for calculating FPS
+cTime = 0
 pTime = 0
 
-# mpHands = mp.solutions.hands
-
+mpHands = mp.solutions.hands
+hands = mpHands.Hands(static_image_mode=False,
+                      max_num_hands=2,
+                      min_detection_confidence=0.5,
+                      min_tracking_confidence=0.5)
+mpDraw = mp.solutions.drawing_utils
 
 while True:
-    ret, frame = cam.read()
-    if not ret:
+    # Read in an image from the webcam
+    success, frame = cam.read()
+    if not success:
         print("failed to grab frame")
         break
 
+    # Calculate and display frames per second
     cTime = time.time()
     fps = 1 / (cTime - pTime)
     pTime = cTime
     cv2.putText(frame, f'FPS:{int(fps)}', (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     
+    # Display in window
     cv2.imshow("Hand Tracking", frame)
 
     k = cv2.waitKey(1)
@@ -37,7 +47,7 @@ while True:
         print("Escape hit, closing...")
         break
     elif k%256 == 32:
-        # SPACE pressed
+        # SPACE pressed, save frame to disk
         img_name = "opencv_frame_{}.png".format(img_counter)
         cv2.imwrite(img_name, frame)
         print("{} written!".format(img_name))
