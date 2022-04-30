@@ -9,6 +9,7 @@ import cv2
 import mediapipe as mp
 import time
 import math
+import screen_brightness_control as sbc
 
 cam = cv2.VideoCapture(0)
 # Create window for frames from webcam to be displayed in
@@ -26,6 +27,10 @@ hands = mpHands.Hands(static_image_mode=False,
                       min_detection_confidence=0.3,
                       min_tracking_confidence=0.5)
 mpDraw = mp.solutions.drawing_utils
+ 
+# get the brightness of the primary display
+primary_brightness = sbc.get_brightness(display=0)
+print(primary_brightness)
 
 while True:
     # Read in an image from the webcam
@@ -65,8 +70,8 @@ while True:
                     cv2.circle(frame, (cx,cy), 3, (255,0,0), cv2.FILLED)
             mpDraw.draw_landmarks(frame, landmarkList, mpHands.HAND_CONNECTIONS)
     
-    if (distThumbIndex != 0):    
-        print(distThumbIndex)
+    if (distThumbIndex != 0):        
+        sbc.set_brightness(distThumbIndex/240*100, display=0)
     
     # Display in window
     cv2.imshow("Hand Tracking", frame)
