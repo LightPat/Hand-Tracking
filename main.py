@@ -18,6 +18,7 @@ img_counter = 0
 cTime = 0
 pTime = 0
 
+# Create hand tracking model
 mpHands = mp.solutions.hands
 hands = mpHands.Hands(static_image_mode=False,
                       max_num_hands=2,
@@ -37,6 +38,17 @@ while True:
     fps = 1 / (cTime - pTime)
     pTime = cTime
     cv2.putText(frame, f'FPS:{int(fps)}', (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    
+    handPosition = hands.process(frame)
+    
+    if handPosition.multi_hand_landmarks:
+        for landmarkList in handPosition.multi_hand_landmarks:
+            for ID, lm in enumerate(landmarkList.landmark):
+                h, w, c = frame.shape
+                cx, cy = int(lm.x *w), int(lm.y*h)
+                cv2.circle(frame, (cx,cy), 3, (255,0,255), cv2.FILLED)
+                
+            mpDraw.draw_landmarks(frame, landmarkList, mpHands.HAND_CONNECTIONS)
     
     # Display in window
     cv2.imshow("Hand Tracking", frame)
