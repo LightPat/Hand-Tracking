@@ -30,7 +30,6 @@ mpDraw = mp.solutions.drawing_utils
  
 # get the brightness of the primary display
 primary_brightness = sbc.get_brightness(display=0)
-print(primary_brightness)
 
 while True:
     # Read in an image from the webcam
@@ -70,7 +69,7 @@ while True:
                     cv2.circle(frame, (cx,cy), 3, (255,0,0), cv2.FILLED)
             mpDraw.draw_landmarks(frame, landmarkList, mpHands.HAND_CONNECTIONS)
     
-    if (distThumbIndex != 0):        
+    if (distThumbIndex != 0):
         sbc.set_brightness(distThumbIndex/240*100, display=0)
     
     # Display in window
